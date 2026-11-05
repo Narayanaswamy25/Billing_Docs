@@ -5,6 +5,8 @@ Read this file first. Then read [INDEX.md](INDEX.md) and only the docs the task 
 ## What this is
 Multi-tenant billing and business software for Indian businesses (GST). Three apps (Console, Workspace, Counter) over one Express (Node.js) backend with shared MongoDB collections isolated by company (D-039). Docs are the source of truth; code follows them.
 
+> **Code versus docs (audit 2026-11-05).** The built backend differs from this file in four ways, by the owner's choice: NestJS/Fastify instead of Express, one database per company instead of a shared database with `companyId`, permission keys written `module.feature:action` (for example `accounting.accounts:view`) instead of `<module>.<screen>.<verb>`, and payroll already built. Rules 1, 3 to 6 and 8 hold in the code. Details and other gaps: `08-process/61-backend-status-report.md` and `62-frontend-status-report.md`. When docs and code disagree, say so and ask before changing either.
+
 ## Before any task
 | Task | Read first |
 | --- | --- |

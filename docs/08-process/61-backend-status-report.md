@@ -73,8 +73,8 @@ The owner chose to keep the code stack and align behaviour (ADR 0017). These rem
 | B-8 | Business profiles (D-032), Trader and Farm flows | Not built | Release 1.5 per docs |
 | B-9 | "Update required" signal for old clients (`46-api-versioning-changelog`) | Nothing sent | Frontend page cannot work |
 | B-10 | Company maintenance mode with read-only banner | No state or error code | Frontend page cannot work |
-| B-11 | Handoff says "239 paths, 347 operations" | The generated file has **669 paths** | Handoff file is stale. Fix the numbers |
-| B-12 | Handoff says "There is no front end in this repository" and Node 26 missing from PATH | Frontend exists in a sibling repo; Node 26.13.0 is under `~/.nvm` | Stale advice in `HANDOFF.md` |
+| B-11 | Handoff said "239 paths, 347 operations" | The generated file has **669 paths, 800 operations** | **Fixed 2026-11-05** in `HANDOFF.md` |
+| B-12 | Handoff said there is no front end and Node 26 is missing | Frontend exists in a sibling repo; Node 26.13.0 is under `~/.nvm` | **Fixed 2026-11-05** in `HANDOFF.md` and `AGENTS.md` |
 
 ## 6. Errors, risks and bugs found
 
@@ -99,16 +99,20 @@ No failing test and no compile error. These are risks and weak spots found by re
 
 | Need | Status |
 | --- | --- |
-| Response shapes in OpenAPI | **Missing**: the contract has routes, permissions and request bodies, not responses. The frontend reads controllers and e2e specs. This is the biggest contract risk and the cause of the "Unproven" list in the frontend report |
+| Response shapes in OpenAPI | **Missing**: the contract has routes, permissions and request bodies, not responses. The frontend reads controllers and e2e specs. A live check on 2026-11-05 found every shape the frontend uses correct, but nothing keeps it that way, so this stays the biggest contract risk |
 | Update-required signal, maintenance state | Missing (B-9, B-10) |
 | Offline Counter support (terminal registration, number blocks) | Missing (B-7). `/api/v1/pos/sync` exists |
 | Cross-module "home card" data (sales today, low stock, payments due) | Each needs separate calls today; no aggregated dashboard endpoint |
 | Excel/PDF export for reports | Missing (frontend builds invoice PDFs on the device) |
 | Real email delivery | Missing (BE-2) |
 
+## 7a. Live shape check (2026-11-05)
+
+Every endpoint the frontend calls was run on the test harness and the responses matched the Flutter parsers (list in the frontend report, section 5a). Observation for the backend: a new company has no roles, so the user invite flow needs seeded default roles (docs `access/04-role-seeds-and-limits.md`).
+
 ## 8. Recommended order
 
-1. Update docs: record B-1 to B-3 as accepted deviations (decision log), fix stale handoff numbers (B-11, B-12).
+1. Record B-1 to B-3 as accepted deviations in the decision log (stale handoff numbers B-11 and B-12 are fixed; the backend edits are not committed yet).
 2. Add response schemas to OpenAPI (generated from Zod) and a contract test. This makes the frontend work reliable.
 3. Close BE-1 and BE-2 (key vault index key, email adapter).
 4. Server pieces the frontend is waiting on: update-required header, maintenance state, terminal registration with number blocks.
