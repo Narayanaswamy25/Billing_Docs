@@ -119,3 +119,10 @@ Every endpoint the frontend calls was run on the test harness and the responses 
 5. Redis queues and shared rate limit, then S3 storage.
 6. Sales gaps: delivery notes, debit notes, refunds, document PDF.
 7. Load test, penetration test, deployment dry run, Terraform.
+
+## Re-check 2026-11-05 (second run)
+
+`npm run typecheck` and `npm run lint` clean; `npm test` 125 files, 811 tests, 0 failures. Logged stack traces ("unable to authenticate data" in `envelope.ts`) during the run come from the tamper-detection tests and are expected. Atlas and `.env` were not used. Nothing new found missing; the open items in the sections above still stand (response schemas in OpenAPI, update-required and maintenance signals, terminal registration, email adapter, Redis and provider adapters).
+
+### Update 2026-11-05: update-required and maintenance signals built
+New `ClientPolicyGuard` (`src/app/client-policy.guard.ts`): a request whose `X-App-Version` is below `MIN_CLIENT_VERSION` gets 426 `UPDATE_REQUIRED` (details carry the minimum); with `MAINTENANCE_MODE=true` every write gets 503 `MAINTENANCE` with `Retry-After` while reads and `/health` still work. A request with no version header is never refused for its version. Both are settings, also changeable at runtime through `deps.clientPolicy`. Covered by `client-policy.e2e.spec.ts` and `client-version.spec.ts`. **Not built:** per-company maintenance (restore, move) and an operator endpoint to flip the flags without a restart.
